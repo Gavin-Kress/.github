@@ -1,0 +1,34 @@
+name: Sync README to Enterprise
+
+on:
+  push:
+    paths:
+      - "README.md"          # Only trigger on changes to README (optional)
+    branches:
+      - main                 # Or whatever your default branch is
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Personal Repo
+        uses: actions/checkout@v3
+
+      - name: Clone Enterprise Repo
+        run: |
+          git config --global user.name "gavinkress"
+          git config --global user.email "me@GAVINKRESS.ORG"
+
+          # Clone the enterprise repo using the PAT (make sure you have the correct URL to the enterprise repo)
+          git clone https://gavinkress:${{secrets.ENTERPRISE_TOKEN}}@github.GavinKress.com/Gavin-Kress/GavinKress.git
+
+      - name: Copy README
+        run: |
+          cp README.md https://github.com/Gavin-Kress/README.md
+
+      - name: Commit & Push
+        run: |
+          cd ENTERPRISE_REPO
+          git add README.md
+          git commit -m "Sync personal README to enterprise"
+          git push
